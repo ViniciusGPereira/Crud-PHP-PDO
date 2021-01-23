@@ -17,7 +17,7 @@ try {
     echo '<div class="alert alert-danger" role="alert">';
     echo '<br>';
     echo '<h2>Olá, possivélmente você esta com problema de conexão com o DB</h2>';
-    echo '<p>Verifique na documentação como configura-lo acessando o <a href="">link</a></p>';
+    echo '<p>Verifique na documentação como configura-lo acessando o <a href="https://github.com/ViniciusGPereira/Crud-PHP-PDO">link</a></p>';
     echo '<br>';
     echo '</div>';
 }
