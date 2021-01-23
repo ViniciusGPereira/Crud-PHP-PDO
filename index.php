@@ -3,10 +3,25 @@ include 'class/usuario.class.php';
 include 'class/usuario_grupo.php';
 include 'class/grupo.class.php';
 
-$UGClass = new UsuarioGrupo();
-$usuarios_grupos = $UGClass->getAll();
-$grupo = new Grupo();
-$grupos = $grupo->getAll();
+try {
+    $UGClass = new UsuarioGrupo();
+    $usuarios_grupos = $UGClass->getAll();
+    
+    $grupo = new Grupo();
+    $grupos = $grupo->getAll();
+} catch (\Throwable $th) {
+    echo '<pre>';
+    print_r($th);
+    echo '</pre>';
+    echo '<br>';
+    echo '<div class="alert alert-danger" role="alert">';
+    echo '<br>';
+    echo '<h2>Olá, possivélmente você esta com problema de conexão com o DB</h2>';
+    echo '<p>Verifique na documentação como configura-lo acessando o <a href="">link</a></p>';
+    echo '<br>';
+    echo '</div>';
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -89,7 +104,6 @@ $grupos = $grupo->getAll();
                         <div class="form-group">
                             <label for="grupo">Grupo</label>
                             <select required class="form-control" name="grupo_id" id="grupo_id">
-                                <option></option>
                                 <?php foreach($grupos as $grupo):?>
                                 <option value="<?php echo $grupo->getId();?>"><?php echo $grupo->getNome();?></option>
                                 <?php endforeach;?>
@@ -107,12 +121,13 @@ $grupos = $grupo->getAll();
                                 class="form-control" placeholder="" aria-describedby="helpId">
                             <small style="color:red;" id="erro_2">Senhas não coferem</small>
                         </div>
+                        <button type="submit" id="submit_cadastro" class="hidden"></button>
                     </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button type="button" id="btn_cadastro" onclick="$('#cadastrar').submit();"
+                <button type="button" id="btn_cadastro" onclick="$('#submit_cadastro').trigger('click');"
                     class="btn btn-primary">Salvar</button>
             </div>
         </div>
@@ -138,11 +153,12 @@ $grupos = $grupo->getAll();
                             <input type="text" name="nome" class="form-control" placeholder=""
                                 aria-describedby="helpId">
                         </div>
+                        <button type="submit" id="submit_cadastro_grupo" class="hidden"></button>
                     </form>
                     <hr>
                     <b>Grupos Criados</b>
                     <ul>
-                        <?php foreach($grupos as $grupo):?>
+                        <?php foreach($grupos as $grupo): ?>
                         <li><?php echo $grupo->getNome();?></li>
                         <?php endforeach;?>
                     </ul>
@@ -151,7 +167,7 @@ $grupos = $grupo->getAll();
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button type="button" id="btn_cadastro" onclick="$('#cadastrar_grupo').submit();"
+                <button type="button" id="btn_cadastro" onclick="$('#submit_cadastro_grupo').trigger('click');"
                     class="btn btn-primary">Salvar</button>
             </div>
         </div>

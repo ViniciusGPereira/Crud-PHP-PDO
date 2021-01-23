@@ -4,11 +4,18 @@ include 'class/grupo.class.php';
 if(isset($_POST['nome']) && !empty($_POST['nome'])){
     $nome = addslashes($_POST['nome']);
 
-    $grupo = new Grupo();
+    try {
+        $grupo = new Grupo();
 
-    $grupo->setNome($nome);
+        $grupo->setNome($nome);
+    
+        $grupo->store();
+       header("Location: index.php");
 
-    $grupo->store();
+    } catch (\Throwable $th) {
+        echo "<pre>";
+        echo $th;
+        echo "<pre>";
+    }
+
 }
-header("Location: index.php");
-//

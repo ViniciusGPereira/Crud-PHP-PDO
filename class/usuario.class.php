@@ -7,17 +7,9 @@ class Usuario{
     private $login;
     private $password;
 
-    public function __construct($dataArray = null) {
-        $this->pdo = new PDO("mysql:dbname=teste;host=localhost", "mapi", "mapi");
+    public function __construct() {
+        $this->pdo = new PDO("mysql:dbname=teste;host=localhost", "admin", "");
 
-        # Caso receba dados do usuario já preenche a classe
-        if($dataArray)
-        {
-            $this->id = $dataArray['id'];
-            $this->login = $dataArray['login'];
-            $this->nome = $dataArray['nome'];
-            $this->password = $dataArray['password'];
-        }
     }
 
     public function setId($id)
@@ -59,9 +51,10 @@ class Usuario{
     public function store() {
         if($this->nome and $this->login and $this->password) # Não possibilita o registro caso não tenha todos os campos preenchidos
         {
-            $sql = "INSERT INTO usuarios SET nome = $this->nome, login = $this->login , password = ". "'" .md5($this->password)."'";
-            $sql = $this->pdo->exec($sql);
+            $sql = "INSERT INTO usuarios SET nome = ". "'" .$this->nome."', login = ". "'" .$this->login."', password = ". "'" .md5($this->password)."'";
 
+            $sql = $this->pdo->exec($sql);
+            
             if($sql)
             {
                 $this->id = $this->pdo->lastInsertId();
@@ -102,11 +95,13 @@ class Usuario{
             $users = array();
             foreach($sql->fetchAll() as $row)
             { # retorna todos os usuario na classe usuario
-                array_push($users, new Usuario(array(
-                    'id'    =>  $row['id'],
-                    'login'    =>  $row['login'],
-                    'password'    =>  $row['password']
-                )));
+                $user = new Usuario();
+                $user->setId($row['id']);
+                $user->setLogin($row['login']);
+                $user->setNome($row['nome']);
+                $user->setPassword($row['password']);
+
+                array_push($users, $user); 
             }
             return $users;
         }

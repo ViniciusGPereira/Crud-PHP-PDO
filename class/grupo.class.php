@@ -1,19 +1,11 @@
 <?php 
-
 class Grupo{
     private $pdo;
     private $id;
     private $nome;
 
     public function __construct($dataArray = null) {
-        $this->pdo = new PDO("mysql:dbname=teste;host=localhost", "mapi", "mapi");
-
-        # Caso receba dados do grupo já preenche a classe
-        if($dataArray)
-        {
-            $this->id = $dataArray['id'];
-            $this->nome = $dataArray['nome'];
-        }
+        $this->pdo = new PDO("mysql:dbname=teste;host=localhost", "admin", "");
     }
 
     public function setId($id)
@@ -42,10 +34,10 @@ class Grupo{
     public function store() {
         if($this->nome) # Não possibilita o registro caso não tenha todos os campos preenchidos
         {
-            $sql = "INSERT INTO grupos SET nome = :nome";
-            $sql = $this->pdo->prepare($sql);
-            $sql->bindValue(':nome', $this->nome);
-            if($sql->execute())
+            $sql = "INSERT INTO grupos SET nome = ". "'" .$this->nome."'";
+            $sql = $this->pdo->exec($sql);
+
+            if($sql)
             {
                 $this->id = $this->pdo->lastInsertId();
                 return True;
@@ -80,15 +72,16 @@ class Grupo{
 
         if($sql->rowCount() > 0)
         {
-            $users = array();
+            $grupos = array();
             foreach($sql->fetchAll() as $row)
             { # retorna todos os usuario na classe usuario
-                array_push($users, new Grupo(array(
-                    'id'    =>  $row['id'],
-                    'nome'    =>  $row['nome']
-                )));
+                $grupo = new Grupo();
+                $grupo->setId($row['id']);
+                $grupo->setNome($row['nome']);
+
+                array_push($grupos, $grupo); 
             }
-            return $users;
+            return $grupos;
         }
         else
         {

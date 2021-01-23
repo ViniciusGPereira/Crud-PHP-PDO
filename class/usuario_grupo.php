@@ -1,21 +1,14 @@
 <?php 
 
+
 class UsuarioGrupo{
     private $pdo;
     private $id;
     private $usuario_id;
     private $grupo_id;
 
-    public function __construct($dataArray = null) {
-        $this->pdo = new PDO("mysql:dbname=teste;host=localhost", "mapi", "mapi");
-
-        # Caso receba dados já preenche a classe
-        if($dataArray)
-        {
-            $this->id = $dataArray['id'];
-            $this->usuario_id = $dataArray['usuario_id'];
-            $this->grupo_id = $dataArray['grupo_id'];
-        }
+    public function __construct() {
+        $this->pdo = new PDO("mysql:dbname=teste;host=localhost", "admin", "");
     }
 
     public function setId($id)
@@ -52,11 +45,10 @@ class UsuarioGrupo{
     public function store() {
         if($this->usuario_id and $this->grupo_id) # Não possibilita o registro caso não tenha todos os campos preenchidos
         {
-            $sql = "INSERT INTO usuarios_grupos SET usuario_id = :usuario_id, grupo_id = :grupo_id";
-            $sql = $this->pdo->prepare($sql);
-            $sql->bindValue(':usuario_id', $this->usuario_id);
-            $sql->bindValue(':grupo_id', $this->grupo_id);
-            if($sql->execute())
+            $sql = "INSERT INTO usuarios_grupos SET usuario_id = ".$this->usuario_id.", grupo_id = ".$this->grupo_id ;
+            $sql = $this->pdo->exec($sql);
+            
+            if($sql)
             {
                 $this->id = $this->pdo->lastInsertId();
                 return True;
@@ -93,15 +85,17 @@ class UsuarioGrupo{
 
         if($sql->rowCount() > 0)
         {
-            $users = array();
+            $users_grupos = array();
             foreach($sql->fetchAll() as $row)
             { # retorna todos os usuario na classe usuario
-                array_push($users, new UsuarioGrupo(array(
-                    'usuario_id'    =>  $row['usuario_id'],
-                    'grupo_id'    =>  $row['grupo_id']
-                )));
+                $user = new UsuarioGrupo();
+                $user->setId($row['id']);
+                $user->setUserId($row['usuario_id']);
+                $user->setGrupoId($row['grupo_id']);
+
+                array_push($users_grupos, $user);
             }
-            return $users;
+            return $users_grupos;
         }
         else
         {
