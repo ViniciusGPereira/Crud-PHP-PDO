@@ -186,9 +186,12 @@ function validaSenha(id_erro) {
 
     if (key2 != key1) {
         $(element).show();
+        $('#btn_cadastro').attr("disabled", 'disabled');
     } else {
         $('#erro_1').hide();
         $('#erro_2').hide();
+        $('#btn_cadastro').removeAttr("disabled");
+
     }
 }
 </script>
